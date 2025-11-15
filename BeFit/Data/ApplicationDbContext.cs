@@ -1,9 +1,7 @@
-﻿using HomeFinances.Models;
+﻿using BeFit.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Reflection.Emit;
 
 namespace HomeFinances.Data
 {
@@ -13,8 +11,8 @@ namespace HomeFinances.Data
             : base(options)
         {
         }
-        public DbSet<HomeFinances.Models.Category> Category { get; set; } = default!;
-        public DbSet<HomeFinances.Models.Entry> Entry { get; set; } = default!;
+        public DbSet<BeFit.Models.Category> Category { get; set; } = default!;
+        public DbSet<BeFit.Models.Entry> Entry { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
