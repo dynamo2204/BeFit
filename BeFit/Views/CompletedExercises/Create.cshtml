@@ -1,0 +1,62 @@
+@model BeFit.Models.CompletedExercise
+
+@{
+    ViewData["Title"] = "Dodaj æwiczenie";
+}
+
+<h1>Dodaj æwiczenie</h1>
+
+<h4>Nowe æwiczenie</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group mb-3">
+                <label asp-for="ExerciseTypeId" class="control-label"></label>
+                <select asp-for="ExerciseTypeId" class="form-control" asp-items="ViewBag.ExerciseTypeId">
+                    <option value="">-- Wybierz typ æwiczenia --</option>
+                </select>
+                <span asp-validation-for="ExerciseTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="TrainingSessionId" class="control-label"></label>
+                <select asp-for="TrainingSessionId" class="form-control" asp-items="ViewBag.TrainingSessionId">
+                    <option value="">-- Wybierz sesjê treningow¹ --</option>
+                </select>
+                <span asp-validation-for="TrainingSessionId" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Weight" class="control-label"></label>
+                <input asp-for="Weight" class="form-control" type="number" step="0.01" min="0" max="1000" />
+                <span asp-validation-for="Weight" class="text-danger"></span>
+                <small class="form-text text-muted">U¿yte obci¹¿enie w kilogramach</small>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Sets" class="control-label"></label>
+                <input asp-for="Sets" class="form-control" type="number" min="1" max="100" />
+                <span asp-validation-for="Sets" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Reps" class="control-label"></label>
+                <input asp-for="Reps" class="form-control" type="number" min="1" max="1000" />
+                <span asp-validation-for="Reps" class="text-danger"></span>
+                <small class="form-text text-muted">Liczba powtórzeñ w jednej serii</small>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Notes" class="control-label"></label>
+                <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+                <small class="form-text text-muted">Opcjonalne notatki o æwiczeniu</small>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Dodaj" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Anuluj</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

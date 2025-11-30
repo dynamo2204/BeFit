@@ -1,0 +1,26 @@
+@model BeFit.Models.ExerciseType
+
+@{
+    ViewData["Title"] = "Usuñ typ æwiczenia";
+}
+
+<h1>Usuñ typ æwiczenia</h1>
+
+<h3>Czy na pewno chcesz usun¹æ ten typ æwiczenia?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Usuñ" class="btn btn-danger" />
+        <a asp-action="Index" class="btn btn-secondary">Anuluj</a>
+    </form>
+</div>

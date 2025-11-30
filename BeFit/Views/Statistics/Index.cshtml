@@ -1,0 +1,90 @@
+@model IEnumerable<BeFit.Controllers.ExerciseStatistics>
+
+@{
+    ViewData["Title"] = "Moje statystyki";
+}
+
+<h1>Moje statystyki</h1>
+<p class="lead">Statystyki z ostatnich 4 tygodni</p>
+
+@if (Model != null && Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nazwa æwiczenia</th>
+                    <th>Liczba wykonañ</th>
+                    <th>£¹czna liczba powtórzeñ</th>
+                    <th>Œrednie obci¹¿enie (kg)</th>
+                    <th>Maksymalne obci¹¿enie (kg)</th>
+                </tr>
+            </thead>
+            <tbody>
+        @foreach (var stat in Model)
+        {
+                <tr>
+                    <td><strong>@stat.ExerciseName</strong></td>
+                    <td>@stat.TotalOccurrences</td>
+                    <td>@stat.TotalReps</td>
+                    <td>@stat.AverageWeight.ToString("F2")</td>
+                    <td>@stat.MaxWeight</td>
+                </tr>
+        }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Podsumowanie</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h3 class="text-primary">@Model.Sum(s => s.TotalOccurrences)</h3>
+                                <p class="text-muted">Ca³kowita liczba wykonanych æwiczeñ</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h3 class="text-success">@Model.Sum(s => s.TotalReps)</h3>
+                                <p class="text-muted">£¹czna liczba powtórzeñ</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h3 class="text-info">@Model.Count()</h3>
+                                <p class="text-muted">Ró¿nych typów æwiczeñ</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h3 class="text-warning">@Model.Max(s => s.MaxWeight).ToString("F2")</h3>
+                                <p class="text-muted">Najwiêksze obci¹¿enie (kg)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info mt-4" role="alert">
+        <h4 class="alert-heading">Brak danych statystycznych</h4>
+        <p>Nie masz jeszcze ¿adnych æwiczeñ w ostatnich 4 tygodniach.</p>
+        <hr>
+        <p class="mb-0">
+            <a asp-controller="TrainingSessions" asp-action="Create" class="btn btn-primary">Rozpocznij nowy trening</a>
+        </p>
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-controller="TrainingSessions" asp-action="Index" class="btn btn-secondary">Powrót do moich treningów</a>
+</div>

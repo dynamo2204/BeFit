@@ -1,0 +1,63 @@
+@model BeFit.Models.CompletedExercise
+
+@{
+    ViewData["Title"] = "Szczegó³y æwiczenia";
+}
+
+<h1>Szczegó³y æwiczenia</h1>
+
+<div>
+    <h4>@Model.ExerciseType?.Name</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.ExerciseType)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.ExerciseType.Name)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.TrainingSession)
+        </dt>
+        <dd class="col-sm-9">
+            <a asp-controller="TrainingSessions" asp-action="Details" asp-route-id="@Model.TrainingSessionId">
+                @Model.TrainingSession?.StartTime.ToString("dd.MM.yyyy HH:mm")
+            </a>
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Weight)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Weight) kg
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Sets)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Sets)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Reps)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Reps)
+        </dd>
+        <dt class="col-sm-3">
+            £¹czna liczba powtórzeñ
+        </dt>
+        <dd class="col-sm-9">
+            @(Model.Sets * Model.Reps)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Notes)
+        </dt>
+        <dd class="col-sm-9">
+            @(string.IsNullOrEmpty(Model.Notes) ? "-" : Model.Notes)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edytuj</a>
+    <a asp-controller="TrainingSessions" asp-action="Details" asp-route-id="@Model.TrainingSessionId" class="btn btn-info">Powrót do treningu</a>
+    <a asp-action="Index" class="btn btn-secondary">Powrót do listy</a>
+</div>

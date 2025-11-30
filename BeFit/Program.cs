@@ -1,29 +1,66 @@
-﻿/* To ćwiczenie stanowi wstęp do bardziej złożonego ćwiczenia - małej aplikacji webowej BeFit.
-
-Na podstawie przykładowego projektu oraz zdobytej wiedzy, stwórz nowy projekt i nazwij go BeFit. W tym celu wykorzystaj szablon ASP.NET Core MVC. UWAGA! Jako typ uwierzytelnienia wybierz "Pojedyncze konta"!
-
-Tak utworzony szablon aplikacji zawiera już gotowy kontekst bazy danych i podstawowy system użytkowników. Korzystając z przykładowego kodu z HomeFinances, ustaw w Program.cs, aby projekt łączył się z bazą danych SQLite. Należy w tym celu zmodyfikować pliki Program.cs i appsettings.json. Należy również usunąć folder Migrations (prawdopodobnie znajduje się w folderze Data).
-
-Następnie zdefiniuj trzy modele. Jeden model ma opisywać typy ćwiczeń jakie można wykonywać na siłowni. Jedynym parametrem tego modelu jest jego nazwa (i oczywiście Id). Ustaw wybrane przez siebie ograniczenie długości nazwy.
-
-Drugi model zawiera informację o sesji treningowej użytkownika. Chwilowo nie będziemy go łączyć z użytkownikiem, ale miejmy to z tyłu głowy. Dwie ważne informacje, które zawiera ten model, to data i czas rozpoczęcia treningu oraz data i czas zakończenia treningu. Jeśli potrafisz możesz spróbować zdefiniować w modelu walidator weryfikujący, czy data rozpoczęcia nie jest późniejsza niż zakończenia. Nie jest to jednak obowiązkowe, bo wymaga własnej definicji atrybutu.
-
-Trzeci model łączy powyższe dwa. Model ten informuje, jaki typ ćwiczenia został wykonany w jakiej sesji treningowej przez jakiego użytkownika (to ostatnie chwilowo pomiń). Ponadto umieść w nim informacje o zastosowanym obciążeniu, liczbie serii i liczbie powtórzeń w serii.
-
-Te trzy modele zarejestruj w kontekście bazy danych i przeprowadź migrację (stwórz i wykonaj). Przy pomocy oprogramowania do analizy plików baz danych sqlite, podejrzyj i przeanalizuj stworzoną strukturę bazy. */
+using BeFit.Data;
+using BeFit.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// baza
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(connectionString));
+
+// identity
+builder.Services
+    .AddIdentity<AppUser, IdentityRole>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 6;
+    })
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Identity/Account/Login";
+    options.LogoutPath = "/Identity/Account/Logout";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+});
+
+builder.Services.AddTransient<IEmailSender, NoOpEmailSender>();
+
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// seed danych (u�ytkownicy, role)
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        var userManager = services.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await SeedData.Initialize(services, context, userManager, roleManager);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Wyst�pi� b��d podczas inicjalizacji danych.");
+    }
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -32,10 +69,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();
 
 app.Run();

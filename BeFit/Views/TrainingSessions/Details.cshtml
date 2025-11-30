@@ -1,0 +1,71 @@
+@model BeFit.Models.TrainingSession
+
+@{
+    ViewData["Title"] = "Szczegó³y treningu";
+}
+
+<h1>Szczegó³y treningu</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.StartTime)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.EndTime)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.EndTime)
+        </dd>
+        <dt class="col-sm-3">
+            Czas trwania
+        </dt>
+        <dd class="col-sm-9">
+            @((Model.EndTime - Model.StartTime).TotalMinutes.ToString("F0")) minut
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Notes)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Notes)
+        </dd>
+    </dl>
+    
+    <h3>Wykonane æwiczenia</h3>
+    @if (Model.CompletedExercises?.Any() == true)
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Æwiczenie</th>
+                    <th>Obci¹¿enie (kg)</th>
+                    <th>Serie</th>
+                    <th>Powtórzenia</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var exercise in Model.CompletedExercises)
+                {
+                    <tr>
+                        <td>@exercise.ExerciseType?.Name</td>
+                        <td>@exercise.Weight</td>
+                        <td>@exercise.Sets</td>
+                        <td>@exercise.Reps</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Brak wykonanych æwiczeñ w tej sesji.</p>
+    }
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Edytuj</a>
+    <a asp-action="Index" class="btn btn-secondary">Powrót do listy</a>
+</div>

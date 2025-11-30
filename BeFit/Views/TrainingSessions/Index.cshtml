@@ -1,0 +1,53 @@
+@model IEnumerable<BeFit.Models.TrainingSession>
+
+@{
+    ViewData["Title"] = "Moje treningi";
+}
+
+<h1>Moje treningi</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Dodaj nowy trening</a>
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndTime)
+            </th>
+            <th>
+                Czas trwania
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Notes)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndTime)
+            </td>
+            <td>
+                @((item.EndTime - item.StartTime).TotalMinutes.ToString("F0")) min
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Notes)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edytuj</a>
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Szczegó³y</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Usuñ</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
